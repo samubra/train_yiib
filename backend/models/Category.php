@@ -15,7 +15,12 @@ class Category extends BaseCategory {
 						self::HAS_MANY,
 						'Node',
 						'cid' 
-				) 
+				) ,
+				'parent'=>array(
+					self::BELONGS_TO,
+					'Category',
+					'parent'
+					)
 		);
 	}
 	/*
@@ -52,7 +57,7 @@ class Category extends BaseCategory {
 		$tree = $this->getTree ( $category,true );
 		
 		$options = array (
-				'0' => Yii::t ( 'app', 'No parent' ) 
+				'' => Yii::t ( 'app', 'No parent' ) 
 		);
 		foreach ( $tree as $branch )
 			$options = CMap::mergeArray ( $options, $this->getParentOptionBranch ( $branch ) );
@@ -72,7 +77,7 @@ class Category extends BaseCategory {
 	protected function getParentOptionBranch($branch, $depth = 0) {
 		$options = array ();
 		
-		$options [$branch ['model']->id] = str_repeat ( '...', $depth + 1 ) . ' ' . $branch ['model']->name;
+		$options [$branch ['model']->id] = str_repeat ( '...', $depth) . ' ' . $branch ['model']->name;
 		
 		if (! empty ( $branch ['children'] ))
 			foreach ( $branch ['children'] as $leaf )
@@ -166,18 +171,8 @@ class Category extends BaseCategory {
 		$category = is_null($model)?Category::model ()->findAll ('uid=:uid',array(':uid'=>user()->id)):$model;
 		$tree = $this->getTree ( $category, true );
 		
-		/*echo CHtml::openTag ( 'div', array (
-				'class' => 'item' 
-		) );
-		/*echo CHtml::openTag ( 'div', array (
-				'class' => 'title' 
-		) );*/
-		
 		foreach ( $tree as $branch )
 			$this->renderBranch ( $branch );
-		
-		//echo '</div>';
-		//echo '</div>';
 	}
 	
 	/**
@@ -194,10 +189,6 @@ class Category extends BaseCategory {
 		echo CHtml::openTag ( 'div', array (
 				'class' => 'title'
 		) );
-		/*echo CHtml::link ( $branch ['model']->name, array (
-				'node/update',
-				'id' => $branch ['model']->id 
-		) );*/
 		echo $branch ['model']->name;
 		echo CHtml::link ( '<span class=" icon-edit"></span>', array (
 				'category/update',

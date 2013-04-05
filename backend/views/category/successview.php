@@ -1,16 +1,4 @@
-<?php
 
-$this->breadcrumbs = array(
-	Category::label(2)=>array('index'),
-	Yii::t('app', 'Index'),
-);
-
-$this->menu = array(
-	array('label'=>Yii::t('app', 'Create') . ' ' . Category::label(), 'url' => array('create')),
-	array('label'=>Yii::t('app', 'Manage') . ' ' . Category::label(2), 'url' => array('admin')),
-);
-?>
-<div id="categorylistview">
 <div class="span8">     
                         <div class="headInfo">   
                         <h5>分类列表</h5>                
@@ -68,6 +56,7 @@ $this->menu = array(
                                 <div class="toolbar nopadding-toolbar clear clearfix">
                                     <h4>添加分类</h4>
                                 </div> 
+                                <div class="alert in alert-block fade alert-success"><?php echo t('app|Data delete success!');?></div>
                                  <?php
                                     $this->renderPartial('_form', array(
                                             'model' => new Category));
@@ -75,17 +64,3 @@ $this->menu = array(
                             </div>
                         </div>
                     </div>
-                    
-</div>
-<?php 
-Yii::app ()->clientScript->registerScriptFile ( app ()->theme->baseUrl . '/public/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js', CClientScript::POS_END );
-Yii::app ()->clientScript->registerScript ( 'scall', "
-(function($){
-        $(window).load(function(){
-            $(\".faq\").mCustomScrollbar();
-        });
-        
-    })(jQuery);
-" );
-
-?>

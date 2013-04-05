@@ -5,6 +5,8 @@ class CategoryController extends GxController {
 public function filters() {
 	return array(
 			'accessControl', 
+			'postOnly + create,update',
+			'ajaxOnly + view'
 			);
 }
 
@@ -25,54 +27,59 @@ public function accessRules() {
 }
 
 	public function actionView($id) {
-		$this->render('view', array(
-			'model' => $this->loadModel($id, 'Category'),
-		));
+		if(Yii::app()->request->isAjaxRequest){
+			$this->renderPartialWithHisOwnClientScript('ajaxview',array(
+				'model'=>$this->loadModel($id, 'Category'),
+			));
+		}else{
+			user()->setFlash('info',t('app|this is ajax request only!'));
+			$this->redirect(array('index'));
+		}
 	}
 
 	public function actionCreate() {
-		$model = new Category;
-
-		$this->performAjaxValidation($model, 'category-form');
-
 		if (isset($_POST['Category'])) {
+			$model=new Category;
 			$model->setAttributes($_POST['Category']);
 
 			if ($model->save()) {
 				if (Yii::app()->getRequest()->getIsAjaxRequest())
 					Yii::app()->end();
-				else
-					$this->redirect(array('view', 'id' => $model->id));
+				else{
+					user()->setFlash('success',t('app|Data save success!'));
+					$this->redirect(array('index'));
+				}
 			}
+		}else{
+			user()->setFlash('info',t('app|this is post request only!'));
+			$this->redirect(array('index'));
 		}
 
-		$this->render('create', array( 'model' => $model));
 	}
 
 	public function actionUpdate($id) {
-		$model = $this->loadModel($id, 'Category');
-
-		$this->performAjaxValidation($model, 'category-form');
-
 		if (isset($_POST['Category'])) {
+			$model=$this->loadModel($id,'Category');
 			$model->setAttributes($_POST['Category']);
 
 			if ($model->save()) {
-				$this->redirect(array('view', 'id' => $model->id));
+				user()->setFlash('success',t('app|Data save success!'));
+				$this->redirect(array('index'));
 			}
+		}else{
+			user()->setFlash('info',t('app|this is post request only!'));
+			$this->redirect(array('index'));
 		}
-
-		$this->render('update', array(
-				'model' => $model,
-				));
 	}
 
 	public function actionDelete($id) {
 		if (Yii::app()->getRequest()->getIsPostRequest()) {
 			$this->loadModel($id, 'Category')->delete();
+			//user()->setFlash('success',t('app|Data delete success!'));
+			//if (!Yii::app()->getRequest()->getIsAjaxRequest())
+				//$this->redirect(array('index'));
+			echo $this->renderPartialWithHisOwnClientScript('successview',null,true);
 
-			if (!Yii::app()->getRequest()->getIsAjaxRequest())
-				$this->redirect(array('admin'));
 		} else
 			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
 	}
@@ -81,22 +88,8 @@ public function accessRules() {
 		$this->headTitle='分类管理';
 		$this->headInfo='分类列表  添加分类';
 		$this->layout='column1';
-		$dataProvider = new CActiveDataProvider('Category');
-		$this->render('index', array(
-			'dataProvider' => $dataProvider,
-		));
-	}
-
-	public function actionAdmin() {
-		$model = new Category('search');
-		$model->unsetAttributes();
-
-		if (isset($_GET['Category']))
-			$model->setAttributes($_GET['Category']);
-
-		$this->render('admin', array(
-			'model' => $model,
-		));
+		
+		$this->render('index');
 	}
 
 }

@@ -167,7 +167,7 @@
 								array (
 										'label' => '分类管理',
 										'url' => array (
-												'/category',
+												'/category/index',
 										),
 										'icon' => 'isw-archive',
 										/*'itemOptions' => array (
