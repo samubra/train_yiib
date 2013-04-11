@@ -2,104 +2,111 @@
 
 class NodeController extends GxController {
 
-public function filters() {
-	return array(
-			'accessControl', 
-			);
-}
+    public function filters() {
+        return array(
+            'accessControl',
+        );
+    }
 
-public function accessRules() {
-	return array(
-			array('allow', 
-				'actions'=>array('index', 'view'),
-				'users'=>array('@'),
-				),
-			array('allow', 
-				'actions'=>array('minicreate', 'create', 'update', 'admin', 'delete'),
-				'users'=>array('admin'),
-				),
-			array('deny', 
-				'users'=>array('*'),
-				),
-			);
-}
+    public function accessRules() {
+        return array(
+            array('allow',
+                'actions' => array('index', 'view'),
+                'users' => array('@'),
+            ),
+            array('allow',
+                'actions' => array('minicreate', 'create', 'update', 'admin', 'delete'),
+                'users' => array('admin'),
+            ),
+            array('deny',
+                'users' => array('*'),
+            ),
+        );
+    }
 
-	public function actionView($id) {
-		$this->render('view', array(
-			'model' => $this->loadModel($id, 'Node'),
-		));
-	}
+    public function actionView($id) {
+        $this->render('view', array(
+            'model' => $this->loadModel($id, 'Node'),
+        ));
+    }
 
-	public function actionCreate() {
-		$model = new Node;
+    public function actionCreate() {
+        $this->headTitle = '试题管理';
+        $this->headInfo = '添加试题';
+        $this->layout = 'column1';
+        Yii::import('ext.multimodelform.MultiModelForm');
+        $model = new Node;
+        $category = new Category;
+        $item = new Item;
+        //  $this->performAjaxValidation($model, 'node-form');
+        $validatedItem = array(); //ensure an empty array
+        if (isset($_POST['Node'])) {
+            $model->setAttributes($_POST['Node']);
+            //$_POST['Node']['tag']='1';
+            $relatedData = array(
+                'tag' => $_POST['Node']['tag'] === '' ? null : $_POST['Node']['tag'],
+            );
+            if (MultiModelForm::validate($item, $validatedItem) && $model->save()) {
+                $masterValues = array('nid' => $model->id);
+                if (MultiModelForm::save($item, $validatedItem, $deleteItem, $masterValues)) {
 
-		$this->performAjaxValidation($model, 'node-form');
+                    $this->redirect(array('view', 'id' => $model->id));
+                }
+            }
+        }
 
-		if (isset($_POST['Node'])) {
-			$model->setAttributes($_POST['Node']);
-			$relatedData = array(
-				'metas' => $_POST['Node']['metas'] === '' ? null : $_POST['Node']['metas'],
-				);
+        $this->render('create', array('model' => $model, 'category' => $category, 'item' => $item, 'validatedItem' => $validatedItem,));
+    }
 
-			if ($model->saveWithRelated($relatedData)) {
-				if (Yii::app()->getRequest()->getIsAjaxRequest())
-					Yii::app()->end();
-				else
-					$this->redirect(array('view', 'id' => $model->id));
-			}
-		}
+    public function actionUpdate($id) {
+        $model = $this->loadModel($id, 'Node');
 
-		$this->render('create', array( 'model' => $model));
-	}
+        $this->performAjaxValidation($model, 'node-form');
 
-	public function actionUpdate($id) {
-		$model = $this->loadModel($id, 'Node');
+        if (isset($_POST['Node'])) {
+            $model->setAttributes($_POST['Node']);
+            $relatedData = array(
+                'tag' => $_POST['Node']['tag'] === '' ? null : $_POST['Node']['tag'],
+            );
 
-		$this->performAjaxValidation($model, 'node-form');
+            if ($model->saveWithRelated($relatedData)) {
+                $this->redirect(array('view', 'id' => $model->id));
+            }
+        }
 
-		if (isset($_POST['Node'])) {
-			$model->setAttributes($_POST['Node']);
-			$relatedData = array(
-				'metas' => $_POST['Node']['metas'] === '' ? null : $_POST['Node']['metas'],
-				);
+        $this->render('update', array(
+            'model' => $model,
+        ));
+    }
 
-			if ($model->saveWithRelated($relatedData)) {
-				$this->redirect(array('view', 'id' => $model->id));
-			}
-		}
+    public function actionDelete($id) {
+        if (Yii::app()->getRequest()->getIsPostRequest()) {
+            $this->loadModel($id, 'Node')->delete();
 
-		$this->render('update', array(
-				'model' => $model,
-				));
-	}
+            if (!Yii::app()->getRequest()->getIsAjaxRequest())
+                $this->redirect(array('admin'));
+        }
+        else
+            throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
+    }
 
-	public function actionDelete($id) {
-		if (Yii::app()->getRequest()->getIsPostRequest()) {
-			$this->loadModel($id, 'Node')->delete();
+    public function actionIndex() {
+        $dataProvider = new CActiveDataProvider('Node');
+        $this->render('index', array(
+            'dataProvider' => $dataProvider,
+        ));
+    }
 
-			if (!Yii::app()->getRequest()->getIsAjaxRequest())
-				$this->redirect(array('admin'));
-		} else
-			throw new CHttpException(400, Yii::t('app', 'Your request is invalid.'));
-	}
+    public function actionAdmin() {
+        $model = new Node('search');
+        $model->unsetAttributes();
 
-	public function actionIndex() {
-		$dataProvider = new CActiveDataProvider('Node');
-		$this->render('index', array(
-			'dataProvider' => $dataProvider,
-		));
-	}
+        if (isset($_GET['Node']))
+            $model->setAttributes($_GET['Node']);
 
-	public function actionAdmin() {
-		$model = new Node('search');
-		$model->unsetAttributes();
-
-		if (isset($_GET['Node']))
-			$model->setAttributes($_GET['Node']);
-
-		$this->render('admin', array(
-			'model' => $model,
-		));
-	}
+        $this->render('admin', array(
+            'model' => $model,
+        ));
+    }
 
 }

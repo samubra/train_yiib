@@ -24,6 +24,7 @@ $this->menu=array(
 'created',
 'modified',
 'uid',
+'cid',
 'status',
 'extent',
 'parent',
@@ -32,16 +33,7 @@ $this->menu=array(
 	),
 )); ?>
 
-<h2><?php echo GxHtml::encode($model->getRelationLabel('metas')); ?></h2>
-<?php
-	echo GxHtml::openTag('ul');
-	foreach($model->metas as $relatedModel) {
-		echo GxHtml::openTag('li');
-		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('metas/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
-		echo GxHtml::closeTag('li');
-	}
-	echo GxHtml::closeTag('ul');
-?><h2><?php echo GxHtml::encode($model->getRelationLabel('item')); ?></h2>
+<h2><?php echo GxHtml::encode($model->getRelationLabel('item')); ?></h2>
 <?php
 	echo GxHtml::openTag('ul');
 	foreach($model->item as $relatedModel) {
@@ -50,12 +42,12 @@ $this->menu=array(
 		echo GxHtml::closeTag('li');
 	}
 	echo GxHtml::closeTag('ul');
-?><h2><?php echo GxHtml::encode($model->getRelationLabel('chiledNode')); ?></h2>
+?><h2><?php echo GxHtml::encode($model->getRelationLabel('tag')); ?></h2>
 <?php
 	echo GxHtml::openTag('ul');
-	foreach($model->chiledNode as $relatedModel) {
+	foreach($model->tag as $relatedModel) {
 		echo GxHtml::openTag('li');
-		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('node/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
+		echo GxHtml::link(GxHtml::encode(GxHtml::valueEx($relatedModel)), array('tag/view', 'id' => GxActiveRecord::extractPkValue($relatedModel, true)));
 		echo GxHtml::closeTag('li');
 	}
 	echo GxHtml::closeTag('ul');

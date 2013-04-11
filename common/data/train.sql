@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2013 年 04 月 01 日 22:48
+-- 生成日期: 2013 年 04 月 11 日 21:02
 -- 服务器版本: 5.5.29
 -- PHP 版本: 5.4.6-1ubuntu1.2
 
@@ -134,7 +134,7 @@ INSERT INTO `train_category` (`id`, `uid`, `parent`, `name`, `slug`, `type`, `de
 
 CREATE TABLE IF NOT EXISTS `train_item` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '试题被选ID',
-  `nid` int(10) unsigned NOT NULL COMMENT '对应试题主体ID',
+  `nid` int(10) unsigned DEFAULT NULL COMMENT '对应试题主体ID',
   `uid` int(10) unsigned DEFAULT NULL COMMENT '所属用户',
   `modified` int(10) unsigned DEFAULT NULL COMMENT '修改时间',
   `text` text COMMENT '试题被选文字部分',
@@ -143,14 +143,17 @@ CREATE TABLE IF NOT EXISTS `train_item` (
   `status` varchar(16) DEFAULT NULL COMMENT '状态',
   PRIMARY KEY (`id`),
   KEY `nid` (`nid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='试题选项部分' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='试题选项部分' AUTO_INCREMENT=5 ;
 
 --
 -- 转存表中的数据 `train_item`
 --
 
 INSERT INTO `train_item` (`id`, `nid`, `uid`, `modified`, `text`, `correct`, `order`, `status`) VALUES
-(1, 0, 1, 1363619547, 'aaa', '1', 1, '1');
+(1, 5, NULL, NULL, 'aaaa', '0', NULL, NULL),
+(2, 5, NULL, NULL, 'bbbbb', '1', NULL, NULL),
+(3, 6, NULL, NULL, '选项一', '0', NULL, NULL),
+(4, 6, NULL, NULL, '选项而', '1', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -173,7 +176,23 @@ CREATE TABLE IF NOT EXISTS `train_node` (
   PRIMARY KEY (`id`),
   KEY `created` (`created`),
   KEY `cid` (`cid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='试题主体部分' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='试题主体部分' AUTO_INCREMENT=11 ;
+
+--
+-- 转存表中的数据 `train_node`
+--
+
+INSERT INTO `train_node` (`id`, `text`, `created`, `modified`, `uid`, `cid`, `status`, `extent`, `parent`, `itemNum`, `aloowPublic`) VALUES
+(1, '<p>asdasdasdas</p>\r\n', 1365341627, NULL, 1, 5, NULL, 5, NULL, NULL, NULL),
+(2, '<p>sadasdasd</p>\r\n', 1365341676, NULL, 1, 6, NULL, 5, NULL, NULL, NULL),
+(3, '<p>sadasdasd</p>\r\n', 1365341974, NULL, 1, 6, NULL, 5, NULL, NULL, NULL),
+(4, '<p>asdasdadasdasd</p>\r\n', 1365342039, NULL, 1, 3, NULL, 5, NULL, NULL, NULL),
+(5, '<p>asdasdadasdasd</p>\r\n', 1365342311, NULL, 1, 3, NULL, 5, NULL, NULL, NULL),
+(6, '<p>选项一</p>\r\n', 1365342808, NULL, 1, 8, NULL, 5, NULL, NULL, NULL),
+(7, '<p>aa a a a a</p>\r\n', 1365343026, NULL, 1, 1, NULL, 5, NULL, NULL, NULL),
+(8, '<p>as大三大三</p>\r\n', 1365343073, NULL, 1, 5, NULL, 5, NULL, NULL, NULL),
+(9, '<p>a啊啊啊啊啊</p>\r\n', 1365343224, NULL, 1, 5, NULL, 5, NULL, NULL, NULL),
+(10, '<p>a三嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖嗖</p>\r\n', 1365343272, NULL, 1, 4, NULL, 5, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -255,7 +274,14 @@ CREATE TABLE IF NOT EXISTS `train_tag` (
   `name` varchar(200) DEFAULT NULL COMMENT '名称',
   `count` int(10) unsigned DEFAULT NULL COMMENT '所属试题个数',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='标签数据标' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='标签数据标' AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `train_tag`
+--
+
+INSERT INTO `train_tag` (`id`, `uid`, `name`, `count`) VALUES
+(1, 1, 'qianfenchi', NULL);
 
 -- --------------------------------------------------------
 
@@ -285,7 +311,7 @@ CREATE TABLE IF NOT EXISTS `train_users` (
 --
 
 INSERT INTO `train_users` (`id`, `username`, `password`, `email`, `activkey`, `create_at`, `lastvisit_at`, `superuser`, `status`) VALUES
-(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'webmaster@example.com', '9a24eff8c15a6a141ece27eb6947da0f', '2013-03-13 14:53:18', '2013-03-31 14:12:23', 1, 1),
+(1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'webmaster@example.com', '9a24eff8c15a6a141ece27eb6947da0f', '2013-03-13 14:53:18', '2013-04-10 14:41:41', 1, 1),
 (2, 'demo', 'fe01ce2a7fbac8fafaed7c982a04e229', 'demo@example.com', '099f825543f7850cc038b90aaff39fac', '2013-03-13 14:53:18', '2013-03-22 08:46:17', 0, 1);
 
 --

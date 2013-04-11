@@ -16,13 +16,16 @@
 	<?php echo GxHtml::encode($data->getAttributeLabel('uid')); ?>:
 	<?php echo GxHtml::encode($data->uid); ?>
 	<br />
+	<?php echo GxHtml::encode($data->getAttributeLabel('cid')); ?>:
+	<?php echo GxHtml::encode($data->cid); ?>
+	<br />
 	<?php echo GxHtml::encode($data->getAttributeLabel('status')); ?>:
 	<?php echo GxHtml::encode($data->status); ?>
 	<br />
+	<?php /*
 	<?php echo GxHtml::encode($data->getAttributeLabel('extent')); ?>:
 	<?php echo GxHtml::encode($data->extent); ?>
 	<br />
-	<?php /*
 	<?php echo GxHtml::encode($data->getAttributeLabel('parent')); ?>:
 	<?php echo GxHtml::encode($data->parent); ?>
 	<br />

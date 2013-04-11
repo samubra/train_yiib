@@ -47,8 +47,9 @@ You may optionally enter a comparison operator (&lt;, &lt;=, &gt;, &gt;=, &lt;&g
 		'created',
 		'modified',
 		'uid',
-		'status',
+		'cid',
 		/*
+		'status',
 		'extent',
 		'parent',
 		'itemNum',

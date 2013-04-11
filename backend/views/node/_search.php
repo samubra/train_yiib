@@ -31,6 +31,11 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->label($model, 'cid'); ?>
+		<?php echo $form->textField($model, 'cid', array('maxlength' => 10)); ?>
+	</div>
+
+	<div class="row">
 		<?php echo $form->label($model, 'status'); ?>
 		<?php echo $form->textField($model, 'status', array('maxlength' => 16)); ?>
 	</div>

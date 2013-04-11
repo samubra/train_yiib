@@ -1,73 +1,74 @@
-<div class="form">
-
-
-<?php $form = $this->beginWidget('GxActiveForm', array(
-	'id' => 'node-form',
-	'enableAjaxValidation' => true,
-));
-?>
-
-	<p class="note">
-		<?php echo Yii::t('app', 'Fields with'); ?> <span class="required">*</span> <?php echo Yii::t('app', 'are required'); ?>.
-	</p>
-
-	<?php echo $form->errorSummary($model); ?>
-
-		<div class="row">
-		<?php echo $form->labelEx($model,'text'); ?>
-		<?php echo $form->textArea($model, 'text'); ?>
-		<?php echo $form->error($model,'text'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'created'); ?>
-		<?php echo $form->textField($model, 'created', array('maxlength' => 10)); ?>
-		<?php echo $form->error($model,'created'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'modified'); ?>
-		<?php echo $form->textField($model, 'modified', array('maxlength' => 10)); ?>
-		<?php echo $form->error($model,'modified'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'uid'); ?>
-		<?php echo $form->textField($model, 'uid', array('maxlength' => 10)); ?>
-		<?php echo $form->error($model,'uid'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'status'); ?>
-		<?php echo $form->textField($model, 'status', array('maxlength' => 16)); ?>
-		<?php echo $form->error($model,'status'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'extent'); ?>
-		<?php echo $form->textField($model, 'extent'); ?>
-		<?php echo $form->error($model,'extent'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'parent'); ?>
-		<?php echo $form->textField($model, 'parent'); ?>
-		<?php echo $form->error($model,'parent'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'itemNum'); ?>
-		<?php echo $form->textField($model, 'itemNum', array('maxlength' => 10)); ?>
-		<?php echo $form->error($model,'itemNum'); ?>
-		</div><!-- row -->
-		<div class="row">
-		<?php echo $form->labelEx($model,'aloowPublic'); ?>
-		<?php echo $form->textField($model, 'aloowPublic', array('maxlength' => 1)); ?>
-		<?php echo $form->error($model,'aloowPublic'); ?>
-		</div><!-- row -->
-
-		<label><?php echo GxHtml::encode($model->getRelationLabel('metas')); ?></label>
-		<?php echo $form->checkBoxList($model, 'metas', GxHtml::encodeEx(GxHtml::listDataEx(Metas::model()->findAllAttributes(null, true)), false, true)); ?>
-		<label><?php echo GxHtml::encode($model->getRelationLabel('item')); ?></label>
-		<?php echo $form->checkBoxList($model, 'item', GxHtml::encodeEx(GxHtml::listDataEx(Item::model()->findAllAttributes(null, true)), false, true)); ?>
-		<label><?php echo GxHtml::encode($model->getRelationLabel('chiledNode')); ?></label>
-		<?php echo $form->checkBoxList($model, 'chiledNode', GxHtml::encodeEx(GxHtml::listDataEx(Node::model()->findAllAttributes(null, true)), false, true)); ?>
-
 <?php
-echo GxHtml::submitButton(Yii::t('app', 'Save'));
-$this->endWidget();
+/** @var BootActiveForm $form */
+$form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+    'id' => 'node-form',
+    'type' => 'vertical', //
+    'htmlOptions' => array('class' => 'well'),
+    'enableAjaxValidation' => false,
+        ));
+$itemFormConfig = array(
+    'elements' => array(
+        'text' => array(
+            'type' => 'textarea',
+            'maxlength' => 40,
+            'class'=>'span12'
+        ),
+        'correct' => array(
+            'type' => 'checkbox',
+            'class'=>'span2'
+        ),
+        
+        
+        ));
 ?>
-</div><!-- form -->
+<?php echo $form->errorSummary($model); ?>
+
+<?php echo $form->ckEditorRow($model, 'text', array('options' => array('fullpage' => 'js:true'))); ?>
+<div class='row-fluid'>
+    <div class="span8 well">
+        <fieldset>
+
+            <?php
+            Yii::app()->bootstrap->registerAssetCss('redactor.css');
+		Yii::app()->bootstrap->registerAssetJs('redactor.min.js');
+            $this->widget('ext.multimodelform.MultiModelForm', array(
+                'id' => 'id_item', //the unique widget id
+                'formConfig' => $itemFormConfig, //the form configuration array
+                'model' => $item, //instance of the form model
+                //if submitted not empty from the controller,
+                'removeText' => '<i class="icon-remove"></i>', 
+                'addItemText'=>'<i class="icon-plus"></i>添加选项',
+                'addItemAsButton'=>true,
+                'removeConfirm'=>'你确定要删除它？',
+                'bootstrapLayout'=>true,
+                'tableView'=>true,
+                'limit'=>2,
+                //the form will be rendered with validation errors
+                'validatedItems' => $validatedItem,
+               // 'jsAfterNewId' => "function(){\$(\'#+this.attr('id')+\').redactor();}",
+                //array of member instances loaded from db
+                'data' => $item->findAll('nid=:nid', array(':nid' => $model->id)),
+            ));
+            ?>
+        </fieldset>
+    </div>
+
+    <div class='span4 well'>
+        <fieldset>
+<?php echo $form->dropDownListRow($model, 'cid', $category->getParentOptionTree()); ?>
+
+
+            <?php echo $form->textFieldRow($model, 'extent', array('hint' => 'In addition to freeform text, any HTML5 text-based input appears like so.'));
+            ?>
+<?php echo $form->radioButtonListInlineRow($model, 'aloowPublic', array('否', '是')); ?>
+            <?php echo $form->checkBoxListRow($model, 'tag', GxHtml::encodeEx(GxHtml::listDataEx(Tag::model()->findAllAttributes(null, true)), true, true)); ?>
+        </fieldset>
+    </div>
+</div>
+<div class="form-actions">
+<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType' => 'submit', 'type' => 'primary', 'label' => 'Submit')); ?>
+<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType' => 'reset', 'label' => 'Reset')); ?>
+</div>
+    <?php
+    $this->endWidget();
+    ?>

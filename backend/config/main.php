@@ -40,7 +40,7 @@ return CMap::mergeArray(
 		// @see http://www.yiiframework.com/doc/api/1.1/CModule#preload-detail
 		'preload' => array('bootstrap', 'log'),
 		// @see http://www.yiiframework.com/doc/api/1.1/CApplication#language-detail
-		'language' => 'zh_CN',
+		'language' => 'zh_cn',
 		// using bootstrap theme ? not needed with extension
 		'theme' => 'aquarius',//matrix,aquarius,bootstrap
 		// setup import paths aliases
